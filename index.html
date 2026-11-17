@@ -137,7 +137,7 @@ body.osc{background:var(--verde)}
     <div class="lema">Una casa para encontrarse</div>
     <p class="txt">¡Gracias por venir! Nos encantaría saber cómo fue tu visita.</p>
     <button class="btn" data-ir="sig">Empezar <svg><use href="#flecha"/></svg></button>
-    <div class="dur">Menos de un minuto · 8 preguntas</div>
+    <div class="dur">Menos de un minuto · 9 preguntas</div>
   </section>
 </main>
 
@@ -156,6 +156,7 @@ const PREGUNTAS = [
   {id:"1733491063", tipo:"unica", t:"¿Cómo nos conociste?", ops:["Pasé por la puerta","Instagram","Recomendación","Trabajo en las oficinas","Otro"]},
   {id:"1010894991", tipo:"escala", t:"¿Qué tan probable es que nos recomiendes a un amigo?", min:0, max:10, extremos:["Nada probable","Muy probable"]},
   {id:"1307188343", tipo:"texto", t:"¿Qué te gustaría que agreguemos o mejoremos?", ph:"Contanos lo que quieras…", opcional:true},
+  {id:"1297115285", tipo:"texto", t:"¿Hay algún plato que te gustaría que esté en la nueva carta cuando inauguremos a la noche?", ph:"Ej: una buena milanesa, pastas caseras, una tabla para compartir…", opcional:true},
   {id:"1730040308", tipo:"corto", t:"¿Querés que te avisemos cuando abramos de noche?", ayuda:"Dejanos tu WhatsApp o mail (opcional)", ph:"Tu WhatsApp o mail", opcional:true, sinNumero:true},
 ];
 const TOTAL = PREGUNTAS.filter(p=>!p.sinNumero).length;
