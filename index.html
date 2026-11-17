@@ -150,7 +150,7 @@ const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSf29rLqKtquGXpnNG9gQFZ9C8
 const PREGUNTAS = [
   {id:"2123012647", tipo:"unica", t:"¿Es tu primera vez en Casa Santa Cruz?", ops:["Sí, es la primera","No, ya vine antes"]},
   {id:"352077371",  tipo:"estrellas", t:"¿Cómo calificarías tu experiencia hoy?", etiquetas:["Mala","Regular","Buena","Muy buena","¡Excelente!"]},
-  {id:"766268192",  tipo:"multiple", t:"¿Qué elegiste hoy?", ayuda:"Podés marcar más de una", ops:["Algo para tomar","Algo dulce","Algo salado","Un plato"], opcional:true},
+  {id:"766268192",  tipo:"corto", t:"¿Qué elegiste hoy?", ayuda:"Contanos qué pediste", ph:"Ej: un cortado y una medialuna", opcional:true, auto:"off"},
   {id:"1281720895", tipo:"escala", t:"¿Qué te pareció la calidad del café o de la comida?", min:1, max:5, extremos:["Mala","Excelente"]},
   {id:"1981674804", tipo:"escala", t:"¿Cómo fue la atención del equipo?", min:1, max:5, extremos:["Mala","Excelente"]},
   {id:"1733491063", tipo:"unica", t:"¿Cómo nos conociste?", ops:["Pasé por la puerta","Instagram","Recomendación","Trabajo en las oficinas","Otro"]},
@@ -178,7 +178,7 @@ function render(p, i){
     const ns=[]; for(let n=p.min;n<=p.max;n++) ns.push(n);
     h += `<div class="escala${p.max>5?' diez':''}">` + ns.map(n=>`<button class="n" data-v="${n}">${n}</button>`).join('') + `</div><div class="leyenda"><span>${esc(p.extremos[0])}</span><span>${esc(p.extremos[1])}</span></div>`;
   } else {
-    h += p.tipo==='texto' ? `<textarea placeholder="${esc(p.ph)}" maxlength="1000"></textarea>` : `<input type="text" placeholder="${esc(p.ph)}" autocomplete="email" maxlength="120">`;
+    h += p.tipo==='texto' ? `<textarea placeholder="${esc(p.ph)}" maxlength="1000"></textarea>` : `<input type="text" placeholder="${esc(p.ph)}" autocomplete="${p.auto||'email'}" maxlength="200" enterkeyhint="next">`;
     const ultimo = i===PREGUNTAS.length-1;
     h += `<div class="acc"><button class="btn" data-ir="${ultimo?'enviar':'sig'}">${ultimo?'Enviar':'Siguiente'} <svg><use href="#flecha"/></svg></button>${ultimo?'':'<button class="saltar" data-ir="sig">Saltar</button>'}</div><p class="error">No pudimos enviar. Revisá tu conexión e intentá de nuevo.</p>`;
   }
@@ -203,6 +203,11 @@ function render(p, i){
   });
   const campo = s.querySelector('textarea,input');
   if (campo) campo.addEventListener('input', ()=>{ resp[p.id] = campo.value.trim(); });
+  if (campo && campo.tagName==='INPUT') campo.addEventListener('keydown', e=>{
+    if (e.key!=='Enter') return;
+    e.preventDefault(); campo.blur();
+    s.querySelector('.btn[data-ir]').click();
+  });
 }
 PREGUNTAS.forEach(render);
 
