@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#384430">
+<title>Casa Santa Cruz · Contanos tu visita</title>
+<meta name="description" content="Encuesta de Casa Santa Cruz. Una casa para encontrarse.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-0.5 -0.5 4 4'%3E%3Crect x='-0.5' y='-0.5' width='4' height='4' rx='.8' fill='%23384430'/%3E%3Cg fill='%23fff'%3E%3Crect width='1' height='1' rx='.14'/%3E%3Crect x='2' width='1' height='1' rx='.14'/%3E%3Crect y='2' width='1' height='1' rx='.14'/%3E%3Crect x='2' y='2' width='1' height='1' rx='.14'/%3E%3Crect x='1' y='1' width='1' height='1'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --verde:#384430; --verde-2:#2c3626; --verde-claro:#4a5741;
+  --crema:#f4f0e6; --papel:#fbf9f4; --tinta:#1f241b; --suave:#6b7163;
+  --linea:#e2dccd; --dorado:#b5894f;
+  --ease:cubic-bezier(.22,.8,.26,1);
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--crema);color:var(--tinta);font:16px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* ---------- barra superior ---------- */
+.top{position:fixed;inset:0 0 auto;z-index:5;background:var(--crema);padding:14px 20px 0;padding-top:max(14px,env(safe-area-inset-top))}
+.top-in{max-width:520px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.top svg{width:26px;height:26px;flex:none}
+.top .marca{font:600 15px Fraunces,Georgia,serif;color:var(--verde);flex:1}
+.top .paso{font-size:13px;color:var(--suave);font-variant-numeric:tabular-nums}
+.barra{max-width:520px;margin:12px auto 0;height:3px;background:var(--linea);border-radius:3px;overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:var(--verde);border-radius:3px;transition:width .5s var(--ease)}
+.top.oculta{opacity:0;pointer-events:none}
+
+/* ---------- pantallas ---------- */
+main{position:relative;min-height:100%;max-width:520px;margin:0 auto}
+.pant{position:absolute;inset:0;min-height:100svh;padding:110px 22px 40px;display:flex;flex-direction:column;justify-content:center;
+  opacity:0;transform:translateY(24px);pointer-events:none;transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.pant.activa{opacity:1;transform:none;pointer-events:auto;position:relative}
+.pant.sale{opacity:0;transform:translateY(-24px)}
+.num{font-size:12px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--dorado)}
+h2{font:500 clamp(26px,7vw,32px)/1.18 Fraunces,Georgia,serif;margin:10px 0 28px;color:var(--tinta);letter-spacing:-.2px}
+.ayuda{font-size:14px;color:var(--suave);margin:-18px 0 22px}
+
+/* opciones */
+.ops{display:flex;flex-direction:column;gap:10px}
+.op{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--papel);border:1.5px solid var(--linea);border-radius:16px;padding:17px 18px;font-size:16.5px;font-weight:500;transition:transform .15s,border-color .2s,background .2s,color .2s}
+.op:active{transform:scale(.985)}
+.op .mk{width:22px;height:22px;border-radius:50%;border:1.5px solid #c9c2b0;flex:none;display:grid;place-items:center;transition:.2s}
+.op.cb .mk{border-radius:7px}
+.op .mk svg{width:12px;height:12px;opacity:0;transition:.2s}
+.op.sel{background:var(--verde);border-color:var(--verde);color:#fff}
+.op.sel .mk{border-color:#fff;background:#fff}
+.op.sel .mk svg{opacity:1}
+@media (hover:hover){.op:hover:not(.sel){border-color:var(--verde-claro)}}
+
+/* estrellas */
+.estrellas{display:flex;justify-content:space-between;gap:6px}
+.est{flex:1;aspect-ratio:1;max-width:72px;display:grid;place-items:center;border-radius:16px;background:var(--papel);border:1.5px solid var(--linea);transition:.2s}
+.est svg{width:58%;height:58%;fill:none;stroke:#c9c2b0;stroke-width:1.6;transition:.2s}
+.est.on{border-color:var(--dorado);background:#fbf3e6}
+.est.on svg{fill:var(--dorado);stroke:var(--dorado)}
+.leyenda{display:flex;justify-content:space-between;font-size:13px;color:var(--suave);margin-top:12px}
+.etq{text-align:center;font:500 18px Fraunces,Georgia,serif;color:var(--verde);height:26px;margin-top:18px}
+
+/* escala */
+.escala{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.escala.diez{grid-template-columns:repeat(6,1fr)}
+.n{aspect-ratio:1;border-radius:14px;background:var(--papel);border:1.5px solid var(--linea);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;transition:.2s}
+.n.sel{background:var(--verde);border-color:var(--verde);color:#fff}
+
+/* texto */
+textarea,input[type=text],input[type=tel]{width:100%;background:var(--papel);border:1.5px solid var(--linea);border-radius:16px;padding:16px 18px;font:inherit;font-size:16.5px;color:inherit;resize:none;transition:border-color .2s}
+textarea{min-height:140px}
+textarea:focus,input:focus{outline:none;border-color:var(--verde)}
+::placeholder{color:#a5a091}
+
+/* botones */
+.acc{display:flex;gap:10px;margin-top:26px;align-items:center}
+.btn{background:var(--verde);color:#fff;border-radius:999px;padding:16px 28px;font-weight:600;font-size:16px;display:inline-flex;align-items:center;gap:10px;transition:background .2s,opacity .2s,transform .15s}
+.btn:active{transform:scale(.98)}
+.btn:hover{background:var(--verde-2)}
+.btn[disabled]{opacity:.35;pointer-events:none}
+.btn svg{width:18px;height:18px}
+.saltar{color:var(--suave);font-size:15px;padding:16px 12px}
+.atras{position:fixed;left:max(14px,calc(50% - 250px));bottom:max(18px,env(safe-area-inset-bottom));width:44px;height:44px;border-radius:50%;background:var(--papel);border:1px solid var(--linea);display:grid;place-items:center;z-index:5;transition:opacity .3s}
+.atras svg{width:18px;height:18px;stroke:var(--tinta)}
+.atras.oculta{opacity:0;pointer-events:none}
+
+/* portada y final */
+.portada,.final{background:var(--verde);color:#fff;text-align:center;align-items:center}
+.portada{padding-top:40px}
+.portada .logo,.final .logo{width:76px;height:76px}
+.portada h1{font:500 clamp(36px,10vw,44px)/1.05 Fraunces,Georgia,serif;margin-top:26px;letter-spacing:-.3px}
+.portada .lema{font-size:15px;opacity:.7;margin-top:8px;letter-spacing:.4px}
+.portada p.txt{font-size:17px;opacity:.9;margin:34px auto 0;max-width:320px;line-height:1.5}
+.portada .btn,.final .btn{background:var(--crema);color:var(--verde);margin-top:34px}
+.portada .btn:hover{background:#fff}
+.portada .dur{font-size:13px;opacity:.6;margin-top:14px}
+body.osc{background:var(--verde)}
+.final h2{color:#fff;margin:26px 0 10px;font-size:clamp(30px,8vw,38px)}
+.final .gr{opacity:.85;font-size:16px}
+.noche{margin-top:40px;border:1px solid rgba(255,255,255,.22);border-radius:22px;padding:26px 22px;max-width:380px}
+.noche .luna{width:30px;height:30px;margin:0 auto}
+.noche h3{font:500 22px/1.2 Fraunces,Georgia,serif;margin:12px 0 8px}
+.noche p{opacity:.85;font-size:15px;line-height:1.55}
+.ig{display:inline-flex;align-items:center;gap:8px;margin-top:22px;color:#fff;text-decoration:none;font-size:15px;opacity:.9;border-bottom:1px solid rgba(255,255,255,.35);padding-bottom:2px}
+.ig svg{width:16px;height:16px}
+.dir{font-size:13px;opacity:.55;margin-top:30px}
+.error{display:none;margin-top:14px;color:#a33;font-size:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body class="osc">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <mask id="mk"><rect width="3" height="3" fill="#fff"/><circle cx="2" cy="0" r="1"/><circle cx="3" cy="1" r="1"/><circle cx="1" cy="3" r="1"/><circle cx="0" cy="2" r="1"/></mask>
+  <g id="iso"><path d="M.97 0H2.03V.97H3V2.03H2.03V3H.97V2.03H0V.97H.97Z" mask="url(#mk)"/><rect width="1" height="1" rx=".14"/><rect x="2" width="1" height="1" rx=".14"/><rect y="2" width="1" height="1" rx=".14"/><rect x="2" y="2" width="1" height="1" rx=".14"/></g>
+  <symbol id="star" viewBox="0 0 24 24"><path stroke-linejoin="round" d="M12 2.8l2.8 5.7 6.3.9-4.55 4.43 1.07 6.27L12 17.13 6.38 20.1l1.07-6.27L2.9 9.4l6.3-.9z"/></symbol>
+  <symbol id="check" viewBox="0 0 12 12"><path d="M2.5 6.2l2.3 2.3 4.7-5" fill="none" stroke="#384430" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="flecha" viewBox="0 0 20 20"><path d="M4 10h12m-5-5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<header class="top oculta" id="top">
+  <div class="top-in">
+    <svg viewBox="0 0 3 3" fill="#384430"><use href="#iso"/></svg>
+    <span class="marca">Casa Santa Cruz</span>
+    <span class="paso" id="paso"></span>
+  </div>
+  <div class="barra"><i id="prog"></i></div>
+</header>
+
+<main id="app">
+  <section class="pant portada activa" data-tipo="portada">
+    <svg class="logo" viewBox="0 0 3 3" fill="#fff"><use href="#iso"/></svg>
+    <h1>Casa Santa Cruz</h1>
+    <div class="lema">Una casa para encontrarse</div>
+    <p class="txt">¡Gracias por venir! Nos encantaría saber cómo fue tu visita.</p>
+    <button class="btn" data-ir="sig">Empezar <svg><use href="#flecha"/></svg></button>
+    <div class="dur">Menos de un minuto · 8 preguntas</div>
+  </section>
+</main>
+
+<button class="atras oculta" id="atras" aria-label="Volver"><svg viewBox="0 0 20 20"><path d="M16 10H4m5-5l-5 5 5 5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+<script>
+/* Las respuestas se guardan en el Google Form de Casa Santa Cruz */
+const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSf29rLqKtquGXpnNG9gQFZ9C8e9ACfHcq6fMNApaP56ptbAlA/formResponse";
+
+const PREGUNTAS = [
+  {id:"2123012647", tipo:"unica", t:"¿Es tu primera vez en Casa Santa Cruz?", ops:["Sí, es la primera","No, ya vine antes"]},
+  {id:"352077371",  tipo:"estrellas", t:"¿Cómo calificarías tu experiencia hoy?", etiquetas:["Mala","Regular","Buena","Muy buena","¡Excelente!"]},
+  {id:"766268192",  tipo:"multiple", t:"¿Qué elegiste hoy?", ayuda:"Podés marcar más de una", ops:["Algo para tomar","Algo dulce","Algo salado","Un plato"], opcional:true},
+  {id:"1281720895", tipo:"escala", t:"¿Qué te pareció la calidad del café o de la comida?", min:1, max:5, extremos:["Mala","Excelente"]},
+  {id:"1981674804", tipo:"escala", t:"¿Cómo fue la atención del equipo?", min:1, max:5, extremos:["Mala","Excelente"]},
+  {id:"1733491063", tipo:"unica", t:"¿Cómo nos conociste?", ops:["Pasé por la puerta","Instagram","Recomendación","Trabajo en las oficinas","Otro"]},
+  {id:"1010894991", tipo:"escala", t:"¿Qué tan probable es que nos recomiendes a un amigo?", min:0, max:10, extremos:["Nada probable","Muy probable"]},
+  {id:"1307188343", tipo:"texto", t:"¿Qué te gustaría que agreguemos o mejoremos?", ph:"Contanos lo que quieras…", opcional:true},
+  {id:"1730040308", tipo:"corto", t:"¿Querés que te avisemos cuando abramos de noche?", ayuda:"Dejanos tu WhatsApp o mail (opcional)", ph:"Tu WhatsApp o mail", opcional:true, sinNumero:true},
+];
+const TOTAL = PREGUNTAS.filter(p=>!p.sinNumero).length;
+const resp = {};
+const app = document.getElementById('app');
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render(p, i){
+  const s = document.createElement('section');
+  s.className = 'pant'; s.dataset.i = i;
+  let h = p.sinNumero ? `<div class="num">Último paso</div>` : `<div class="num">${i+1} de ${TOTAL}</div>`;
+  h += `<h2>${esc(p.t)}</h2>` + (p.ayuda ? `<p class="ayuda">${esc(p.ayuda)}</p>` : '');
+  if (p.tipo==='unica' || p.tipo==='multiple'){
+    const cb = p.tipo==='multiple';
+    h += `<div class="ops">` + p.ops.map(o=>`<button class="op${cb?' cb':''}" data-v="${esc(o)}"><span class="mk"><svg><use href="#check"/></svg></span>${esc(o)}</button>`).join('') + `</div>`;
+    if (cb) h += `<div class="acc"><button class="btn" data-ir="sig">Siguiente <svg><use href="#flecha"/></svg></button></div>`;
+  } else if (p.tipo==='estrellas'){
+    h += `<div class="estrellas">` + [1,2,3,4,5].map(n=>`<button class="est" data-v="${n}" aria-label="${n} estrellas"><svg><use href="#star"/></svg></button>`).join('') + `</div><div class="etq"></div>`;
+  } else if (p.tipo==='escala'){
+    const ns=[]; for(let n=p.min;n<=p.max;n++) ns.push(n);
+    h += `<div class="escala${p.max>5?' diez':''}">` + ns.map(n=>`<button class="n" data-v="${n}">${n}</button>`).join('') + `</div><div class="leyenda"><span>${esc(p.extremos[0])}</span><span>${esc(p.extremos[1])}</span></div>`;
+  } else {
+    h += p.tipo==='texto' ? `<textarea placeholder="${esc(p.ph)}" maxlength="1000"></textarea>` : `<input type="text" placeholder="${esc(p.ph)}" autocomplete="email" maxlength="120">`;
+    const ultimo = i===PREGUNTAS.length-1;
+    h += `<div class="acc"><button class="btn" data-ir="${ultimo?'enviar':'sig'}">${ultimo?'Enviar':'Siguiente'} <svg><use href="#flecha"/></svg></button>${ultimo?'':'<button class="saltar" data-ir="sig">Saltar</button>'}</div><p class="error">No pudimos enviar. Revisá tu conexión e intentá de nuevo.</p>`;
+  }
+  s.innerHTML = h;
+  app.appendChild(s);
+
+  s.addEventListener('click', e=>{
+    const b = e.target.closest('[data-v]'); if(!b) return;
+    const v = b.dataset.v;
+    if (p.tipo==='multiple'){
+      b.classList.toggle('sel');
+      resp[p.id] = [...s.querySelectorAll('.op.sel')].map(x=>x.dataset.v);
+      return;
+    }
+    s.querySelectorAll('[data-v]').forEach(x=>x.classList.remove('sel','on'));
+    if (p.tipo==='estrellas'){
+      s.querySelectorAll('.est').forEach(x=>x.classList.toggle('on', +x.dataset.v <= +v));
+      s.querySelector('.etq').textContent = p.etiquetas[v-1];
+    } else b.classList.add('sel');
+    resp[p.id] = v;
+    setTimeout(()=>ir(+1), p.tipo==='estrellas'?650:380);
+  });
+  const campo = s.querySelector('textarea,input');
+  if (campo) campo.addEventListener('input', ()=>{ resp[p.id] = campo.value.trim(); });
+}
+PREGUNTAS.forEach(render);
+
+const fin = document.createElement('section');
+fin.className = 'pant final';
+fin.innerHTML = `<svg class="logo" viewBox="0 0 3 3" fill="#fff"><use href="#iso"/></svg>
+  <h2>¡Gracias!</h2><p class="gr">Tu opinión nos ayuda a seguir mejorando la casa.</p>
+  <div class="noche">
+    <svg class="luna" viewBox="0 0 24 24" fill="#f4f0e6"><path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg>
+    <h3>Muy pronto abrimos de noche</h3>
+    <p>Estamos preparando una nueva propuesta gastronómica. Te esperamos para comer y tomar algo rico con amigos o en familia.</p>
+    <a class="ig" href="https://www.instagram.com/casasantacruz.ar/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="#fff"/></svg>@casasantacruz.ar</a>
+  </div>
+  <div class="dir">Av. Gaspar Campos 931</div>`;
+app.appendChild(fin);
+
+const pants = [...app.querySelectorAll('.pant')];
+let actual = 0;
+const barraTop = document.getElementById('top'), prog = document.getElementById('prog'), paso = document.getElementById('paso'), atras = document.getElementById('atras');
+
+function completa(i){ // índice de pantalla -> pregunta
+  const p = PREGUNTAS[i-1];
+  return !p || p.opcional || (resp[p.id] && resp[p.id].length);
+}
+function mostrar(n){
+  if (n===actual || n<0 || n>=pants.length) return;
+  const a = pants[actual], b = pants[n];
+  a.classList.add('sale'); a.classList.remove('activa');
+  setTimeout(()=>a.classList.remove('sale'), 450);
+  b.classList.add('activa');
+  actual = n;
+  const enPregunta = n>0 && n<pants.length-1;
+  document.body.classList.toggle('osc', !enPregunta);
+  barraTop.classList.toggle('oculta', !enPregunta);
+  atras.classList.toggle('oculta', !enPregunta || n===1);
+  prog.style.width = enPregunta ? (Math.min(n, TOTAL+1)/(TOTAL+1)*100)+'%' : '0';
+  paso.textContent = enPregunta ? (n<=TOTAL ? `${n}/${TOTAL}` : '') : '';
+  window.scrollTo(0,0);
+  const c = b.querySelector('textarea,input'); if (c && matchMedia('(hover:hover)').matches) setTimeout(()=>c.focus(), 450);
+}
+function ir(d){ if (d>0 && !completa(actual)) return; mostrar(actual+d); }
+
+async function enviar(btn){
+  btn.disabled = true; btn.firstChild.textContent = 'Enviando… ';
+  const fd = new URLSearchParams();
+  for (const [id,v] of Object.entries(resp)){
+    if (Array.isArray(v)) v.forEach(x=>fd.append('entry.'+id, x));
+    else if (v!=='' && v!=null) fd.append('entry.'+id, v);
+  }
+  try{
+    await fetch(FORM, {method:'POST', mode:'no-cors', body:fd});
+    mostrar(pants.length-1);
+  }catch(e){
+    btn.disabled = false; btn.firstChild.textContent = 'Enviar ';
+    btn.closest('.pant').querySelector('.error').style.display='block';
+  }
+}
+
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-ir]'); if(!b) return;
+  if (b.dataset.ir==='sig') ir(+1);
+  if (b.dataset.ir==='enviar') enviar(b);
+});
+atras.addEventListener('click', ()=>mostrar(actual-1));
+</script>
+</body>
+</html>
